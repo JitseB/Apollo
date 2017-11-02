@@ -23,7 +23,9 @@ import net.jitse.apollo.spigot.ApolloSpigot;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 /**
@@ -126,13 +128,13 @@ public class MySQL {
      * @param callback The data callback (Async).
      * @param values   The values to be inserted into the statement.
      */
-    public void select(String query, SelectCall callback, Object... values) {
+    public void select(String query, Consumer<ResultSet> callback, Object... values) {
         new Thread(() -> {
             try (Connection resource = getConnection(); PreparedStatement statement = resource.prepareStatement(query)) {
                 for (int i = 0; i < values.length; i++) {
                     statement.setObject((i + 1), values[i]);
                 }
-                callback.call(statement.executeQuery());
+                callback.accept(statement.executeQuery());
             } catch (SQLException exception) {
                 plugin.getLogger().log(Level.WARNING, "An error occurred while executing a query on the database.");
                 plugin.getLogger().log(Level.WARNING, "MySQL#select : " + query);
