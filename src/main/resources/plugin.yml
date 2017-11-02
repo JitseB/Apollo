@@ -1,0 +1,5 @@
+name: ${project.artifactId}
+version: ${project.version}
+author: Jitse
+main: net.jitse.apollo.spigot.ApolloSpigot
+description: Apollo plugin for Spigot.

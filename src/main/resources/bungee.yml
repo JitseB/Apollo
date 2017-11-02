@@ -1,0 +1,5 @@
+name: ${project.artifactId}
+version: ${project.version}
+author: Jitse
+main: net.jitse.apollo.bungeecord.ApolloBungeeCord
+description: Apollo plugin for BungeeCord.
