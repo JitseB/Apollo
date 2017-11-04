@@ -30,37 +30,43 @@ import java.util.stream.Collectors;
 public enum DataType {
 
     // BungeeCord variables:
-    NAME("VARCHAR(255)", "Name", false),
+    NAME("VARCHAR(255)", "Name", false, false),
 
     // Server tracking variables:
-    ONLINE("TINYINT(1)", "Online", false),
-    LAST_ALIVE("BIGINT(50)", "LastAlive", false),
+    ONLINE("TINYINT(1)", "Online", false, false),
+    LAST_ALIVE("BIGINT(50)", "LastAlive", true, false),
 
     // Bukkit variables:
-    PORT("INT(5)", "Port", false),
-    ONLINE_MODE("TINYINT(1)", "OnlineMode", false),
-    WHITELIST("TINYINT(1)", "Whitelist", false),
-    ONLINE_PLAYERS("INT(5)", "OnlinePlayers", true),
-    MAX_PLAYERS("INT(5)", "MaxPlayers", false),
-    MOTD("TEXT", "MOTD", false),
+    PORT("INT(5)", "Port", false, false),
+    ONLINE_MODE("TINYINT(1)", "OnlineMode", false, false),
+    WHITELIST("TINYINT(1)", "Whitelist", false, false),
+    ONLINE_PLAYERS("INT(5)", "OnlinePlayers", true, true),
+    MAX_PLAYERS("INT(5)", "MaxPlayers", false, false),
+    MOTD("TEXT", "MOTD", false, false),
 
     // Computed variables:
-    TICKS_PER_SECOND("FLOAT(4)", "TPS", true),
-    MEMORY_USED("INT(6)", "MemoryUsed", true),
-    MEMORY_MAX("INT(6)", "MemoryMax", false);
+    TICKS_PER_SECOND("FLOAT(4)", "TPS", true, true),
+    MEMORY_USED("INT(6)", "MemoryUsed", true, true),
+    MEMORY_MAX("INT(6)", "MemoryMax", true, false);
 
     private String sqlType;
     private String sqlName;
+    private boolean schedule;
     private boolean graph;
 
-    DataType(String sqlType, String sqlName, boolean graph) {
+    DataType(String sqlType, String sqlName, boolean schedule, boolean graph) {
         this.sqlType = sqlType;
         this.sqlName = sqlName;
+        this.schedule = schedule;
         this.graph = graph;
     }
 
     public boolean hasGraph() {
         return graph;
+    }
+
+    public boolean isScheduled() {
+        return schedule;
     }
 
     public static String getTable() {
