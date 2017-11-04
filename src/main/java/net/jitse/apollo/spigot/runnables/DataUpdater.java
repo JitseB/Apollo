@@ -18,9 +18,7 @@ package net.jitse.apollo.spigot.runnables;
  */
 
 import net.jitse.apollo.spigot.ApolloSpigot;
-import org.bukkit.Bukkit;
 
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -34,7 +32,7 @@ public class DataUpdater implements Runnable {
     private final ApolloSpigot plugin;
     private final long millisDelay;
 
-    private int startDelay;
+    private int startOffset;
     private Timer timer;
 
     public DataUpdater(ApolloSpigot plugin, boolean networkSync, long millisDelay) {
@@ -47,20 +45,21 @@ public class DataUpdater implements Runnable {
         // Equation: ((INT) RANDOM * A) * B
         // A -> number of possible channels.
         // B -> size of steps.
-        this.startDelay = networkSync ? 0 : ((int) (Math.random() * 10)) * 100;
-        if (startDelay > millisDelay) {
-            // If the start delay is bigger than the actual timer delay
+        this.startOffset = networkSync ? 0 : ((int) (Math.random() * 10)) * 100;
+        if (startOffset >= millisDelay) {
+            // If the start offset is bigger than the actual timer delay
             // reduce the start delay by using the modulo function.
-            this.startDelay %= millisDelay;
+            this.startOffset %= millisDelay;
         }
-        Bukkit.broadcastMessage("" + startDelay);
+
+        plugin.getLogger().log(Level.INFO, "Starting the data updater " + (networkSync ? "..." : "with a " + startOffset + "ms offset..."));
     }
 
     @Override
     public synchronized void run() {
         do {
-            if ((System.currentTimeMillis() + startDelay) % millisDelay == 0) {
-                plugin.getLogger().log(Level.INFO, "Started data updater on " + new Date(System.currentTimeMillis()) + ".");
+            if ((System.currentTimeMillis() + startOffset) % millisDelay == 0) {
+                plugin.getLogger().log(Level.INFO, "Started the data updater.");
                 break;
             }
 
