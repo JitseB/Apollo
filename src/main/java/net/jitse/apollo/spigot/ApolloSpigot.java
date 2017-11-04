@@ -21,6 +21,7 @@ import net.jitse.apollo.spigot.config.SpigotConfig;
 import net.jitse.apollo.spigot.listeners.PlayerJoinListener;
 import net.jitse.apollo.spigot.listeners.PlayerKickListener;
 import net.jitse.apollo.spigot.listeners.PlayerQuitListener;
+import net.jitse.apollo.spigot.runnables.DataUpdater;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,6 +34,8 @@ import java.util.logging.Level;
 public class ApolloSpigot extends JavaPlugin {
 
     private SpigotConfig config;
+    private DataUpdater dataUpdaterRunnable;
+    private Thread dataUpdaterThread;
 
     @Override
     public void onEnable() {
@@ -49,13 +52,17 @@ public class ApolloSpigot extends JavaPlugin {
         }
         getLogger().log(Level.INFO, "Loaded config.yml.");
 
-        // todo
+        // Todo : Change to config variables.
+        dataUpdaterRunnable = new DataUpdater(this, false, 5000);
+        dataUpdaterThread = new Thread(dataUpdaterRunnable);
+        dataUpdaterThread.start();
 
         getLogger().log(Level.INFO, "Enabled " + getDescription().getName() + " v" + getDescription().getVersion() + ".");
     }
 
     @Override
     public void onDisable() {
-
+        dataUpdaterRunnable.purge();
+        dataUpdaterThread.interrupt();
     }
 }
