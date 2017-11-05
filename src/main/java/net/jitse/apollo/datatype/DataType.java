@@ -18,9 +18,11 @@ package net.jitse.apollo.datatype;
  */
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -30,35 +32,41 @@ import java.util.stream.Collectors;
 public enum DataType {
 
     // BungeeCord variables:
-    NAME("VARCHAR(255)", "Name", false, false),
+    NAME("VARCHAR(255)", "Name", false, false, null),
 
     // Server tracking variables:
-    ONLINE("TINYINT(1)", "Online", false, false),
-    LAST_ALIVE("BIGINT(50)", "LastAlive", true, false),
+    ONLINE("TINYINT(1)", "Online", false, false, null),
+    LAST_ALIVE("BIGINT(50)", "LastAlive", true, false, () -> System.currentTimeMillis()),
 
     // Bukkit variables:
-    PORT("INT(5)", "Port", false, false),
-    ONLINE_MODE("TINYINT(1)", "OnlineMode", false, false),
-    WHITELIST("TINYINT(1)", "Whitelist", false, false),
-    ONLINE_PLAYERS("INT(5)", "OnlinePlayers", true, true),
-    MAX_PLAYERS("INT(5)", "MaxPlayers", false, false),
-    MOTD("TEXT", "MOTD", false, false),
+    PORT("INT(5)", "Port", false, false, () -> Bukkit.getPort()), // Primary key
+    ONLINE_MODE("TINYINT(1)", "OnlineMode", false, false, () -> Bukkit.getOnlineMode()),
+    WHITELIST("TINYINT(1)", "Whitelist", false, false, () -> Bukkit.hasWhitelist()),
+    ONLINE_PLAYERS("INT(5)", "OnlinePlayers", true, true, () -> Bukkit.getOnlinePlayers().size()),
+    MAX_PLAYERS("INT(5)", "MaxPlayers", false, false, () -> Bukkit.getMaxPlayers()),
+    MOTD("TEXT", "MOTD", false, false, () -> Bukkit.getMotd()),
 
     // Computed variables:
-    TICKS_PER_SECOND("FLOAT(4)", "TPS", true, true),
-    MEMORY_USED("INT(6)", "MemoryUsed", true, true),
-    MEMORY_MAX("INT(6)", "MemoryMax", true, false);
+    TICKS_PER_SECOND("FLOAT(4)", "TPS", true, true, Suppliers.getTPSSupplier()),
+    MEMORY_USED("INT(6)", "MemoryUsed", true, true, Suppliers.getMemoryUsedSupplier()),
+    MEMORY_MAX("INT(6)", "MemoryMax", true, false, Suppliers.getMemoryMaxSupplier());
 
-    private String sqlType;
-    private String sqlName;
-    private boolean schedule;
-    private boolean graph;
+    private final String sqlType;
+    private final String sqlName;
+    private final boolean schedule;
+    private final boolean graph;
+    private final Supplier<?> supplier;
 
-    DataType(String sqlType, String sqlName, boolean schedule, boolean graph) {
+    DataType(String sqlType, String sqlName, boolean schedule, boolean graph, Supplier<?> supplier) {
         this.sqlType = sqlType;
         this.sqlName = sqlName;
         this.schedule = schedule;
         this.graph = graph;
+        this.supplier = supplier;
+    }
+
+    public String getSQLName() {
+        return sqlName;
     }
 
     public boolean hasGraph() {
@@ -69,8 +77,18 @@ public enum DataType {
         return schedule;
     }
 
-    public static String getTable() {
-        List<String> values = Arrays.stream(values()).map(value -> "`" + value.sqlName + "` " + value.sqlType).collect(Collectors.toList());
+    public Supplier<?> getSupplier() {
+        return supplier;
+    }
+
+    public static String getServersTable() {
+        List<String> values = Arrays.stream(values()).map(value -> "`" + value.sqlName + "` " + value.sqlType + (value == PORT ? " PRIMARY KEY" : "")).collect(Collectors.toList());
         return "CREATE TABLE IF NOT EXISTS ApolloServers (" + StringUtils.join(values, ", ") + ");";
+    }
+
+    // Todo : Function not ready yet - Needs to have the server name + timestamp as well!
+    public static String getGraphsTable() {
+        List<String> values = Arrays.stream(values()).filter(value -> value.hasGraph()).map(value -> "`" + value.sqlName + "` " + value.sqlType).collect(Collectors.toList());
+        return "CREATE TABLE IF NOT EXISTS ApolloGraphs (" + StringUtils.join(values, ", ") + ");";
     }
 }

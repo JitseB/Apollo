@@ -52,19 +52,17 @@ public class MySQL {
      * @param database The database name.
      * @return
      */
-    public Exception connect(String host, Integer port, String username, String password, String database) {
+    public void connect(String host, Integer port, String username, String password, String database, boolean ssl) throws Exception {
         try {
             HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ':' + (port == null ? 3306 : port) + '/' + database);
+            hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ':' + (port == null ? 3306 : port) + '/' + database + "?useSSL=" + ssl);
             hikariConfig.setUsername(username);
             hikariConfig.setPassword(password);
             hikariDataSource = new HikariDataSource(hikariConfig);
             plugin.getLogger().log(Level.INFO, "Connected to the database with username: \"" + username + "\".");
-        } catch (Exception exception) { // Failsafe method.
-            hikariDataSource = null;
-            return exception;
+        } catch (Exception exception) {
+            throw exception;
         }
-        return null;
     }
 
     public boolean isInitiated() {
@@ -113,6 +111,29 @@ public class MySQL {
                     statement.setObject((i + 1), values[i]);
                 }
                 statement.execute();
+            } catch (SQLException exception) {
+                plugin.getLogger().log(Level.WARNING, "An error occurred while executing an update on the database.");
+                plugin.getLogger().log(Level.WARNING, "MySQL#execute : " + query);
+                exception.printStackTrace();
+            }
+        }).start();
+    }
+
+    /**
+     * Execute an update to the database.
+     *
+     * @param query    The statement to the database.
+     * @param finished Runnable execute once finished update.
+     * @param values   The values to be inserted into the statement.
+     */
+    public void execute(String query, Runnable finished, Object... values) {
+        new Thread(() -> {
+            try (Connection resource = getConnection(); PreparedStatement statement = resource.prepareStatement(query)) {
+                for (int i = 0; i < values.length; i++) {
+                    statement.setObject((i + 1), values[i]);
+                }
+                statement.execute();
+                finished.run();
             } catch (SQLException exception) {
                 plugin.getLogger().log(Level.WARNING, "An error occurred while executing an update on the database.");
                 plugin.getLogger().log(Level.WARNING, "MySQL#execute : " + query);

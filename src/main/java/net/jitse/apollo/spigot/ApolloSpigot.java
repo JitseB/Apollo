@@ -17,11 +17,14 @@ package net.jitse.apollo.spigot;
  * limitations under the License.
  */
 
+import net.jitse.apollo.datatype.DataType;
+import net.jitse.apollo.mysql.MySQL;
 import net.jitse.apollo.spigot.config.SpigotConfig;
 import net.jitse.apollo.spigot.listeners.PlayerJoinListener;
 import net.jitse.apollo.spigot.listeners.PlayerKickListener;
 import net.jitse.apollo.spigot.listeners.PlayerQuitListener;
-import net.jitse.apollo.spigot.runnables.DataUpdater;
+import net.jitse.apollo.spigot.tasks.DataUpdater;
+import net.jitse.apollo.spigot.tasks.InitialDataUpdater;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,6 +37,7 @@ import java.util.logging.Level;
 public class ApolloSpigot extends JavaPlugin {
 
     private SpigotConfig config;
+    private MySQL mySQL;
     private DataUpdater dataUpdaterRunnable;
     private Thread dataUpdaterThread;
 
@@ -52,6 +56,26 @@ public class ApolloSpigot extends JavaPlugin {
         }
         getLogger().log(Level.INFO, "Loaded config.yml.");
 
+        mySQL = new MySQL(this);
+        try {
+            mySQL.connect(
+                    config.getConfig().getString("MySQL.Host"),
+                    config.getConfig().getInt("MySQL.Port"),
+                    config.getConfig().getString("MySQL.Username"),
+                    config.getConfig().getString("MySQL.Password"),
+                    config.getConfig().getString("MySQL.Database"),
+                    config.getConfig().getBoolean("MySQL.SSL")
+            );
+        } catch (Exception exception) {
+            // Not sure what possible exceptions can be thrown here,
+            // need to update this later to something more specific.
+            getLogger().log(Level.WARNING, "Could not connect to database. Exception message: " + exception.getMessage());
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        mySQL.execute(DataType.getServersTable(), () -> new InitialDataUpdater(this).runTaskAsynchronously(this));
+
         // Todo : Change to config variables.
         dataUpdaterRunnable = new DataUpdater(this, false, 5000);
         dataUpdaterThread = new Thread(dataUpdaterRunnable);
@@ -62,7 +86,15 @@ public class ApolloSpigot extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        dataUpdaterRunnable.purge();
-        dataUpdaterThread.interrupt();
+        if (dataUpdaterRunnable != null) {
+            dataUpdaterRunnable.purge();
+        }
+        if (dataUpdaterThread != null) {
+            dataUpdaterThread.interrupt();
+        }
+    }
+
+    public MySQL getMySQL() {
+        return mySQL;
     }
 }

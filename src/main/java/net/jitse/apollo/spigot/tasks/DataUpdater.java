@@ -1,4 +1,4 @@
-package net.jitse.apollo.spigot.runnables;
+package net.jitse.apollo.spigot.tasks;
 
 /*
  * A server overview system for Minecraft networks.
@@ -17,11 +17,16 @@ package net.jitse.apollo.spigot.runnables;
  * limitations under the License.
  */
 
+import net.jitse.apollo.datatype.DataType;
 import net.jitse.apollo.spigot.ApolloSpigot;
+import org.bukkit.Bukkit;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * @auhor Jitse B.
@@ -65,6 +70,7 @@ public class DataUpdater implements Runnable {
 
             // Now let's slow down the runnable by 1ms so it
             // becomes a bit more manageable for the server.
+            // (System#currentTimeMillis only changes every 1ms anyway)
             try {
                 wait(1);
             } catch (InterruptedException exception) {
@@ -76,7 +82,26 @@ public class DataUpdater implements Runnable {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                // Todo : Update ApolloServers.
+                List<DataType> scheduledTypes = new ArrayList<>();
+                List<DataType> graphTypes = new ArrayList<>();
+
+                for (DataType type : DataType.values()) {
+                    if (type.isScheduled()) {
+                        scheduledTypes.add(type);
+                    }
+                    if (type.hasGraph()) {
+                        graphTypes.add(type);
+                    }
+                }
+
+                String set = scheduledTypes.stream().map(type -> "`" + type.getSQLName() + "`=?").collect(Collectors.joining(", "));
+                List<Object> values = scheduledTypes.stream().map(type -> type.getSupplier().get()).collect(Collectors.toList());
+                values.add(Bukkit.getPort()); // For the WHERE statement.
+
+                plugin.getMySQL().execute("UPDATE ApolloServers SET " + set + " WHERE Port=?;", values.toArray());
+
+                long time = System.currentTimeMillis();
+                // Todo : graph types. Include System#currentTimesMillis.
             }
         }, 0, millisDelay);
     }

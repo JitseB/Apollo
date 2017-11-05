@@ -54,6 +54,7 @@ public class SpigotConfig {
             configuration.set("MySQL.Username", "default");
             configuration.set("MySQL.Password", "unknown");
             configuration.set("MySQL.Database", "apollodb");
+            configuration.set("MySQL.SSL", true);
 
             try {
                 configuration.save(file);
