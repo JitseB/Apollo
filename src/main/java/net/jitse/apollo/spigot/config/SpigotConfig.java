@@ -47,8 +47,6 @@ public class SpigotConfig {
      */
     public boolean init() {
         if (!file.exists()) {
-            configuration.set("SocketPort", 8193);
-
             configuration.set("MySQL.Host", "127.0.0.1");
             configuration.set("MySQL.Port", 3306);
             configuration.set("MySQL.Username", "default");

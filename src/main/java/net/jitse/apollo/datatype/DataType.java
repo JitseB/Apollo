@@ -49,7 +49,7 @@ public enum DataType {
     // Computed variables:
     TICKS_PER_SECOND("FLOAT(4)", "TPS", true, true, Suppliers.getTPSSupplier()),
     MEMORY_USED("INT(6)", "MemoryUsed", true, true, Suppliers.getMemoryUsedSupplier()),
-    MEMORY_MAX("INT(6)", "MemoryMax", true, false, Suppliers.getMemoryMaxSupplier());
+    MEMORY_MAX("INT(6)", "MemoryMax", true, false, Suppliers.getMemoryMaxSupplier()); // Somehow this value updates?
 
     private final String sqlType;
     private final String sqlName;
