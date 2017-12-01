@@ -20,9 +20,6 @@ package net.jitse.apollo.spigot;
 import net.jitse.apollo.datatype.DataType;
 import net.jitse.apollo.mysql.MySQL;
 import net.jitse.apollo.spigot.config.SpigotConfig;
-import net.jitse.apollo.spigot.listeners.PlayerJoinListener;
-import net.jitse.apollo.spigot.listeners.PlayerKickListener;
-import net.jitse.apollo.spigot.listeners.PlayerQuitListener;
 import net.jitse.apollo.spigot.tasks.DataUpdater;
 import net.jitse.apollo.spigot.tasks.InitialDataUpdater;
 import org.bukkit.Bukkit;
@@ -43,11 +40,6 @@ public class ApolloSpigot extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerKickListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
-        getLogger().log(Level.INFO, "Initialized event listeners.");
-
         config = new SpigotConfig(this);
         if (!config.init()) {
             getLogger().log(Level.INFO, "Please fill out the config.yml, then reload the server.");

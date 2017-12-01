@@ -19,6 +19,7 @@ package net.jitse.apollo.mysql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import net.jitse.apollo.bungeecord.ApolloBungeeCord;
 import net.jitse.apollo.spigot.ApolloSpigot;
 
 import java.sql.Connection;
@@ -34,12 +35,16 @@ import java.util.logging.Level;
  */
 public class MySQL {
 
-    private final ApolloSpigot plugin;
-
+    private ApolloSpigot spigot;
+    private ApolloBungeeCord bungeecord;
     private HikariDataSource hikariDataSource;
 
-    public MySQL(ApolloSpigot plugin) {
-        this.plugin = plugin;
+    public MySQL(ApolloBungeeCord bungeecord) {
+        this.bungeecord = bungeecord;
+    }
+
+    public MySQL(ApolloSpigot spigot) {
+        this.spigot = spigot;
     }
 
     /**
@@ -59,7 +64,12 @@ public class MySQL {
             hikariConfig.setUsername(username);
             hikariConfig.setPassword(password);
             hikariDataSource = new HikariDataSource(hikariConfig);
-            plugin.getLogger().log(Level.INFO, "Connected to the database with username: \"" + username + "\".");
+
+            if (spigot != null) {
+                spigot.getLogger().log(Level.INFO, "Connected to the database with username: \"" + username + "\".");
+            } else {
+                bungeecord.getLogger().log(Level.INFO, "Connected to the database with username: \"" + username + "\".");
+            }
         } catch (Exception exception) {
             throw exception;
         }
@@ -92,7 +102,13 @@ public class MySQL {
             try (Connection resource = getConnection(); PreparedStatement statement = resource.prepareStatement("CREATE TABLE IF NOT EXISTS " + name + "(" + info + ");")) {
                 statement.execute();
             } catch (SQLException exception) {
-                plugin.getLogger().log(Level.WARNING, "An error occurred while creating database table " + name + ".");
+
+                if (spigot != null) {
+                    spigot.getLogger().log(Level.WARNING, "An error occurred while creating database table " + name + ".");
+                } else {
+                    bungeecord.getLogger().log(Level.WARNING, "An error occurred while creating database table " + name + ".");
+                }
+
                 exception.printStackTrace();
             }
         }).start();
@@ -112,8 +128,15 @@ public class MySQL {
                 }
                 statement.execute();
             } catch (SQLException exception) {
-                plugin.getLogger().log(Level.WARNING, "An error occurred while executing an update on the database.");
-                plugin.getLogger().log(Level.WARNING, "MySQL#execute : " + query);
+
+                if (spigot != null) {
+                    spigot.getLogger().log(Level.WARNING, "An error occurred while executing an update on the database.");
+                    spigot.getLogger().log(Level.WARNING, "MySQL#execute : " + query);
+                } else {
+                    bungeecord.getLogger().log(Level.WARNING, "An error occurred while executing an update on the database.");
+                    bungeecord.getLogger().log(Level.WARNING, "MySQL#execute : " + query);
+                }
+
                 exception.printStackTrace();
             }
         }).start();
@@ -135,8 +158,15 @@ public class MySQL {
                 statement.execute();
                 finished.run();
             } catch (SQLException exception) {
-                plugin.getLogger().log(Level.WARNING, "An error occurred while executing an update on the database.");
-                plugin.getLogger().log(Level.WARNING, "MySQL#execute : " + query);
+
+                if (spigot != null) {
+                    spigot.getLogger().log(Level.WARNING, "An error occurred while executing an update on the database.");
+                    spigot.getLogger().log(Level.WARNING, "MySQL#execute : " + query);
+                } else {
+                    bungeecord.getLogger().log(Level.WARNING, "An error occurred while executing an update on the database.");
+                    bungeecord.getLogger().log(Level.WARNING, "MySQL#execute : " + query);
+                }
+
                 exception.printStackTrace();
             }
         }).start();
@@ -157,8 +187,14 @@ public class MySQL {
                 }
                 callback.accept(statement.executeQuery());
             } catch (SQLException exception) {
-                plugin.getLogger().log(Level.WARNING, "An error occurred while executing a query on the database.");
-                plugin.getLogger().log(Level.WARNING, "MySQL#select : " + query);
+
+                if (spigot != null) {
+                    spigot.getLogger().log(Level.WARNING, "An error occurred while executing a query on the database.");
+                    spigot.getLogger().log(Level.WARNING, "MySQL#select : " + query);
+                } else {
+                    bungeecord.getLogger().log(Level.WARNING, "An error occurred while executing a query on the database.");
+                    bungeecord.getLogger().log(Level.WARNING, "MySQL#select : " + query);
+                }
                 exception.printStackTrace();
             }
         }).start();

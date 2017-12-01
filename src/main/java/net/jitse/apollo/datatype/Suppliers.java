@@ -34,14 +34,15 @@ class Suppliers {
 
     private static final long MEGABYTE = 1024L * 1024L;
     private static final NumberFormat NUMBER_FORMAT = new DecimalFormat("##.##", DecimalFormatSymbols.getInstance(Locale.US));
-    private static final String VERSION = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+    private static String version;
     private static Class<?> minecraftServer;
 
     static {
         try {
-            minecraftServer = Class.forName("net.minecraft.server." + VERSION + ".MinecraftServer");
-        } catch (ClassNotFoundException exception) {
-            exception.printStackTrace();
+            Class.forName("org.bukkit.Bukkit");
+            version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+            minecraftServer = Class.forName("net.minecraft.server." + version + ".MinecraftServer");
+        } catch (ClassNotFoundException ignored) {
         }
     }
 
@@ -51,8 +52,7 @@ class Suppliers {
                 Object server = minecraftServer.getMethod("getServer").invoke(null);
                 double currentTps = ((double[]) server.getClass().getField("recentTps").get(server))[0];
                 return currentTps > 20 ? 20.00 : NUMBER_FORMAT.format(currentTps);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | NoSuchFieldException exception) {
-                exception.printStackTrace();
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | NoSuchFieldException ignored) {
             }
             return 00.00;
         };
@@ -73,5 +73,59 @@ class Suppliers {
             runtime.gc();
             return (int) (runtime.totalMemory() / MEGABYTE); // Return in MBs.
         };
+    }
+
+    protected static Supplier<?> getPortSupplier() {
+        try {
+            Class.forName("org.bukkit.Bukkit");
+            return () -> Bukkit.getPort();
+        } catch (ClassNotFoundException exception) {
+            return null;
+        }
+    }
+
+    protected static Supplier<?> getOnlineModeSupplier() {
+        try {
+            Class.forName("org.bukkit.Bukkit");
+            return () -> Bukkit.getOnlineMode();
+        } catch (ClassNotFoundException exception) {
+            return null;
+        }
+    }
+
+    protected static Supplier<?> getWhitelistSupplier() {
+        try {
+            Class.forName("org.bukkit.Bukkit");
+            return () -> Bukkit.hasWhitelist();
+        } catch (ClassNotFoundException exception) {
+            return null;
+        }
+    }
+
+    protected static Supplier<?> getOnlinePlayersSupplier() {
+        try {
+            Class.forName("org.bukkit.Bukkit");
+            return () -> Bukkit.getOnlinePlayers().size();
+        } catch (ClassNotFoundException exception) {
+            return null;
+        }
+    }
+
+    protected static Supplier<?> getMaxPlayersSupplier() {
+        try {
+            Class.forName("org.bukkit.Bukkit");
+            return () -> Bukkit.getMaxPlayers();
+        } catch (ClassNotFoundException exception) {
+            return null;
+        }
+    }
+
+    protected static Supplier<?> getMotdSupplier() {
+        try {
+            Class.forName("org.bukkit.Bukkit");
+            return () -> Bukkit.getMotd();
+        } catch (ClassNotFoundException exception) {
+            return null;
+        }
     }
 }

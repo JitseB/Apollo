@@ -18,7 +18,6 @@ package net.jitse.apollo.datatype;
  */
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
  */
 public enum DataType {
 
-    // BungeeCord variables:
+    // BungeeCord variable:
     NAME("VARCHAR(255)", "Name", false, false, null),
 
     // Server tracking variables:
@@ -39,12 +38,12 @@ public enum DataType {
     LAST_ALIVE("BIGINT(50)", "LastAlive", true, false, () -> System.currentTimeMillis()),
 
     // Bukkit variables:
-    PORT("INT(5)", "Port", false, false, () -> Bukkit.getPort()), // Primary key
-    ONLINE_MODE("TINYINT(1)", "OnlineMode", false, false, () -> Bukkit.getOnlineMode()),
-    WHITELIST("TINYINT(1)", "Whitelist", false, false, () -> Bukkit.hasWhitelist()),
-    ONLINE_PLAYERS("INT(5)", "OnlinePlayers", true, true, () -> Bukkit.getOnlinePlayers().size()),
-    MAX_PLAYERS("INT(5)", "MaxPlayers", false, false, () -> Bukkit.getMaxPlayers()),
-    MOTD("TEXT", "MOTD", false, false, () -> Bukkit.getMotd()),
+    PORT("INT(5)", "Port", false, false, Suppliers.getPortSupplier()), // Primary key
+    ONLINE_MODE("TINYINT(1)", "OnlineMode", false, false, Suppliers.getOnlineModeSupplier()),
+    WHITELIST("TINYINT(1)", "Whitelist", false, false, Suppliers.getWhitelistSupplier()),
+    ONLINE_PLAYERS("INT(5)", "OnlinePlayers", true, true, Suppliers.getOnlinePlayersSupplier()),
+    MAX_PLAYERS("INT(5)", "MaxPlayers", false, false, Suppliers.getMaxPlayersSupplier()),
+    MOTD("TEXT", "MOTD", false, false, () -> Suppliers.getMotdSupplier()),
 
     // Computed variables:
     TICKS_PER_SECOND("FLOAT(4)", "TPS", true, true, Suppliers.getTPSSupplier()),
@@ -86,9 +85,8 @@ public enum DataType {
         return "CREATE TABLE IF NOT EXISTS ApolloServers (" + StringUtils.join(values, ", ") + ");";
     }
 
-    // Todo : Function not ready yet - Needs to have the server name + timestamp as well!
     public static String getGraphsTable() {
         List<String> values = Arrays.stream(values()).filter(value -> value.hasGraph()).map(value -> "`" + value.sqlName + "` " + value.sqlType).collect(Collectors.toList());
-        return "CREATE TABLE IF NOT EXISTS ApolloGraphs (" + StringUtils.join(values, ", ") + ");";
+        return "CREATE TABLE IF NOT EXISTS ApolloGraphs (ServerName INT NOT NULL AUTO_INCREMENT PRIMARY KEY, Time BIGINT(50), " + StringUtils.join(values, ", ") + ");";
     }
 }

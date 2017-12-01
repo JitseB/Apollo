@@ -18,6 +18,8 @@ package net.jitse.apollo.bungeecord;
  */
 
 import net.jitse.apollo.bungeecord.config.BungeeCordConfig;
+import net.jitse.apollo.bungeecord.socket.SocketHandler;
+import net.jitse.apollo.mysql.MySQL;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.IOException;
@@ -30,6 +32,8 @@ import java.util.logging.Level;
 public class ApolloBungeeCord extends Plugin {
 
     private BungeeCordConfig config;
+    private MySQL mySql;
+    private SocketHandler socket;
 
     @Override
     public void onEnable() {
@@ -43,8 +47,39 @@ public class ApolloBungeeCord extends Plugin {
             }
         } catch (IOException exception) {
             getLogger().log(Level.WARNING, "An unexpected exception was thrown while getting the config.yml file. Exception message: " + exception.getMessage());
+            return;
         }
 
-        // todo
+        mySql = new MySQL(this);
+        try {
+            mySql.connect(
+                    config.getConfig().getString("MySQL.Host"),
+                    config.getConfig().getInt("MySQL.Port"),
+                    config.getConfig().getString("MySQL.Username"),
+                    config.getConfig().getString("MySQL.Password"),
+                    config.getConfig().getString("MySQL.Database"),
+                    config.getConfig().getBoolean("MySQL.SSL")
+            );
+        } catch (Exception exception) {
+            getLogger().log(Level.WARNING, "Was not able to connect to the database. Exception message: " + exception.getMessage());
+            return;
+        }
+
+        socket = new SocketHandler(this);
+    }
+
+    @Override
+    public void onDisable() {
+        if (socket != null) {
+            socket.stop();
+        }
+    }
+
+    public BungeeCordConfig getConfig() {
+        return this.config;
+    }
+
+    public MySQL getMySql() {
+        return this.mySql;
     }
 }

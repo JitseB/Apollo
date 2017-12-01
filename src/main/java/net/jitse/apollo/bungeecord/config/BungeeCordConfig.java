@@ -40,6 +40,10 @@ public class BungeeCordConfig {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "config.yml");
 
+        if (!plugin.getDataFolder().exists()) {
+            plugin.getDataFolder().mkdir();
+        }
+
         if (file.exists()) {
             this.configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
         }
@@ -52,15 +56,19 @@ public class BungeeCordConfig {
      */
     public boolean init() throws IOException {
         if (!file.exists()) {
+            file.createNewFile();
+
             this.configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
 
             configuration.set("SocketPort", 8193);
+            configuration.set("ServerListSize", 50);
 
             configuration.set("MySQL.Host", "127.0.0.1");
             configuration.set("MySQL.Port", 3306);
             configuration.set("MySQL.Username", "default");
             configuration.set("MySQL.Password", "unknown");
             configuration.set("MySQL.Database", "apollodb");
+            configuration.set("MySQL.SSL", false);
 
             try {
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
