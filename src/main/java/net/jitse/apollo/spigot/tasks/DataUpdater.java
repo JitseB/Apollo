@@ -19,7 +19,6 @@ package net.jitse.apollo.spigot.tasks;
 
 import net.jitse.apollo.datatype.DataType;
 import net.jitse.apollo.spigot.ApolloSpigot;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,9 +95,9 @@ public class DataUpdater implements Runnable {
 
                 String set = scheduledTypes.stream().map(type -> "`" + type.getSQLName() + "`=?").collect(Collectors.joining(", "));
                 List<Object> values = scheduledTypes.stream().map(type -> type.getSupplier().get()).collect(Collectors.toList());
-                values.add(Bukkit.getPort()); // For the WHERE statement.
+                values.add(plugin.getId()); // For the WHERE statement.
 
-                plugin.getMySQL().execute("UPDATE ApolloServers SET " + set + " WHERE Port=?;", values.toArray());
+                plugin.getMySQL().execute("UPDATE ApolloServers SET " + set + " WHERE ID=?;", values.toArray());
 
                 long time = System.currentTimeMillis();
                 // Todo : graph types. Include System#currentTimesMillis.

@@ -71,7 +71,6 @@ public class SocketHandler {
 
                     client.sendEvent("server_list", "", servers.toString());
                 } catch (SQLException exception) {
-                    exception.printStackTrace();
                     client.sendEvent("server_list", exception.getMessage());
                 }
             });

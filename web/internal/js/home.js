@@ -1,3 +1,5 @@
+var loaded = false;
+
 function load(socket) {
   socket.on('connect', function() {
     log('[SOCKET] Established connection.', '#27ae60');
@@ -10,16 +12,32 @@ function load(socket) {
       log('[SOCKET] Server list callback error: ' + error + '.', '#c0392b');
       return;
     }
-    var servers = JSON.parse(data);
-    log('[SOCKET] Recieved server data for ' + servers.length + ' server(s).' + error, '#2980b9');
-    for (var i = 0; i < servers.length; i++) {
-      createServer(servers[i]);
-    }
 
-    // Now let's show the page!
-    document.getElementById('body').style.display = 'block';
-    document.getElementById('loader').style.display = 'none';
-    log('[APOLLO] Showing panel.', '#27ae60');
+    if (!loaded) {
+      var servers = JSON.parse(data);
+      log('[SOCKET] Recieved server data for ' + servers.length + ' server(s).' + error, '#2980b9');
+      for (var i = 0; i < servers.length; i++) {
+        createServer(servers[i]);
+      }
+
+      // Now let's show the page!
+      document.getElementById('body').style.display = 'block';
+      document.getElementById('loader').style.display = 'none';
+
+      loaded = true;
+      log('[APOLLO] Showing panel.', '#27ae60');
+
+      startUpdating(socket);
+    }
+    else {
+      // Update values.
+      var totalNow = document.getElementById('server-container').childNodes.length;
+      log('[APOLLO] Total of ' + totalNow + ' server(s).', '#8e44ad');
+      var servers = JSON.parse(data);
+      for (var i = 0; i < servers.length; i++) {
+        updateServer(servers[i]);
+      }
+    }
   });
 
   socket.on('pong', (latency) => {
@@ -43,13 +61,20 @@ function load(socket) {
   });
 };
 
+function startUpdating(socket) {
+  log('[APOLLO] Started status updater task.', '#27ae60');
+  setInterval(function() {
+    socket.emit('server_list');
+  }, 5 * 1000);
+}
+
 function createServer(serverData) {
   var status = calculateStatus(serverData);
 
   var server = document.createElement('a');
-  server.href = '/server/?id=' + serverData['Port'];
+  server.href = '/server/?id=' + serverData['ID'];
   server.className = 'server';
-  server.id = serverData['Port']; //Todo: Change to propper identifiers.
+  server.id = 'server-' + serverData['ID'];
 
   var nameSpan = document.createElement('span');
   nameSpan.className = 'name';
@@ -66,6 +91,17 @@ function createServer(serverData) {
   // Todo calculate server status.
 
   document.getElementById('server-container').appendChild(server);
+}
+
+function updateServer(serverData) {
+  var id = serverData['ID'];
+  var old = document.getElementById('server-' + id);
+  if (typeof(old) != 'undefined' && old != null) {
+    // update old value
+  }
+  else {
+    // create new item
+  }
 }
 
 function calculateStatus(server) {

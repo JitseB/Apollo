@@ -33,6 +33,7 @@ import java.util.logging.Level;
  */
 public class ApolloSpigot extends JavaPlugin {
 
+    private int id;
     private SpigotConfig config;
     private MySQL mySQL;
     private DataUpdater dataUpdaterRunnable;
@@ -84,6 +85,15 @@ public class ApolloSpigot extends JavaPlugin {
         if (dataUpdaterThread != null) {
             dataUpdaterThread.interrupt();
         }
+    }
+
+    public void setId(int id) {
+        getLogger().log(Level.INFO, "Found server identifier (" + id + ").");
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public MySQL getMySQL() {

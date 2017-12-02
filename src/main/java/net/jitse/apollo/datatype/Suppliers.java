@@ -78,7 +78,7 @@ class Suppliers {
     protected static Supplier<?> getPortSupplier() {
         try {
             Class.forName("org.bukkit.Bukkit");
-            return () -> Bukkit.getPort();
+            return Bukkit::getPort;
         } catch (ClassNotFoundException exception) {
             return null;
         }
@@ -87,7 +87,7 @@ class Suppliers {
     protected static Supplier<?> getOnlineModeSupplier() {
         try {
             Class.forName("org.bukkit.Bukkit");
-            return () -> Bukkit.getOnlineMode();
+            return Bukkit::getOnlineMode;
         } catch (ClassNotFoundException exception) {
             return null;
         }
@@ -96,7 +96,7 @@ class Suppliers {
     protected static Supplier<?> getWhitelistSupplier() {
         try {
             Class.forName("org.bukkit.Bukkit");
-            return () -> Bukkit.hasWhitelist();
+            return Bukkit::hasWhitelist;
         } catch (ClassNotFoundException exception) {
             return null;
         }
@@ -105,7 +105,7 @@ class Suppliers {
     protected static Supplier<?> getOnlinePlayersSupplier() {
         try {
             Class.forName("org.bukkit.Bukkit");
-            return () -> Bukkit.getOnlinePlayers().size();
+            return Bukkit.getOnlinePlayers()::size;
         } catch (ClassNotFoundException exception) {
             return null;
         }
@@ -114,7 +114,7 @@ class Suppliers {
     protected static Supplier<?> getMaxPlayersSupplier() {
         try {
             Class.forName("org.bukkit.Bukkit");
-            return () -> Bukkit.getMaxPlayers();
+            return Bukkit::getMaxPlayers;
         } catch (ClassNotFoundException exception) {
             return null;
         }
@@ -123,7 +123,7 @@ class Suppliers {
     protected static Supplier<?> getMotdSupplier() {
         try {
             Class.forName("org.bukkit.Bukkit");
-            return () -> Bukkit.getMotd();
+            return Bukkit::getMotd;
         } catch (ClassNotFoundException exception) {
             return null;
         }

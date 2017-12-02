@@ -30,25 +30,28 @@ import java.util.stream.Collectors;
  */
 public enum DataType {
 
+    // Server identifier:
+    ID("INT PRIMARY KEY AUTO_INCREMENT NOT NULL", "ID", false, false, null),
+
     // BungeeCord variable:
     NAME("VARCHAR(255)", "Name", false, false, null),
 
     // Server tracking variables:
-    ONLINE("TINYINT(1)", "Online", false, false, null),
-    LAST_ALIVE("BIGINT(50)", "LastAlive", true, false, () -> System.currentTimeMillis()),
+    ONLINE("TINYINT(1) NOT NULL", "Online", false, false, null),
+    LAST_ALIVE("BIGINT(50) NOT NULL", "LastAlive", true, false, () -> System.currentTimeMillis()),
 
     // Bukkit variables:
-    PORT("INT(5)", "Port", false, false, Suppliers.getPortSupplier()), // Primary key
-    ONLINE_MODE("TINYINT(1)", "OnlineMode", false, false, Suppliers.getOnlineModeSupplier()),
-    WHITELIST("TINYINT(1)", "Whitelist", false, false, Suppliers.getWhitelistSupplier()),
-    ONLINE_PLAYERS("INT(5)", "OnlinePlayers", true, true, Suppliers.getOnlinePlayersSupplier()),
-    MAX_PLAYERS("INT(5)", "MaxPlayers", false, false, Suppliers.getMaxPlayersSupplier()),
-    MOTD("TEXT", "MOTD", false, false, () -> Suppliers.getMotdSupplier()),
+    PORT("INT(5) NOT NULL", "Port", false, false, Suppliers.getPortSupplier()), // Primary key
+    ONLINE_MODE("TINYINT(1) NOT NULL", "OnlineMode", false, false, Suppliers.getOnlineModeSupplier()),
+    WHITELIST("TINYINT(1) NOT NULL", "Whitelist", false, false, Suppliers.getWhitelistSupplier()),
+    ONLINE_PLAYERS("INT(5) NOT NULL", "OnlinePlayers", true, true, Suppliers.getOnlinePlayersSupplier()),
+    MAX_PLAYERS("INT(5) NOT NULL", "MaxPlayers", false, false, Suppliers.getMaxPlayersSupplier()),
+    MOTD("TEXT NOT NULL", "MOTD", false, false, Suppliers.getMotdSupplier()),
 
     // Computed variables:
-    TICKS_PER_SECOND("FLOAT(4)", "TPS", true, true, Suppliers.getTPSSupplier()),
-    MEMORY_USED("INT(6)", "MemoryUsed", true, true, Suppliers.getMemoryUsedSupplier()),
-    MEMORY_MAX("INT(6)", "MemoryMax", true, false, Suppliers.getMemoryMaxSupplier()); // Somehow this value updates?
+    TICKS_PER_SECOND("FLOAT(4) NOT NULL", "TPS", true, true, Suppliers.getTPSSupplier()),
+    MEMORY_USED("INT(6) NOT NULL", "MemoryUsed", true, true, Suppliers.getMemoryUsedSupplier()),
+    MEMORY_MAX("INT(6) NOT NULL", "MemoryMax", true, false, Suppliers.getMemoryMaxSupplier());
 
     private final String sqlType;
     private final String sqlName;
@@ -81,10 +84,11 @@ public enum DataType {
     }
 
     public static String getServersTable() {
-        List<String> values = Arrays.stream(values()).map(value -> "`" + value.sqlName + "` " + value.sqlType + (value == PORT ? " PRIMARY KEY" : "")).collect(Collectors.toList());
+        List<String> values = Arrays.stream(values()).map(value -> "`" + value.sqlName + "` " + value.sqlType).collect(Collectors.toList());
         return "CREATE TABLE IF NOT EXISTS ApolloServers (" + StringUtils.join(values, ", ") + ");";
     }
 
+    // Todo: Fix this method.
     public static String getGraphsTable() {
         List<String> values = Arrays.stream(values()).filter(value -> value.hasGraph()).map(value -> "`" + value.sqlName + "` " + value.sqlType).collect(Collectors.toList());
         return "CREATE TABLE IF NOT EXISTS ApolloGraphs (ServerName INT NOT NULL AUTO_INCREMENT PRIMARY KEY, Time BIGINT(50), " + StringUtils.join(values, ", ") + ");";

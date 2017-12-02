@@ -19,6 +19,7 @@ package net.jitse.apollo.bungeecord;
 
 import net.jitse.apollo.bungeecord.config.BungeeCordConfig;
 import net.jitse.apollo.bungeecord.socket.SocketHandler;
+import net.jitse.apollo.bungeecord.tasks.NameColumnUpdater;
 import net.jitse.apollo.mysql.MySQL;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -66,6 +67,8 @@ public class ApolloBungeeCord extends Plugin {
         }
 
         socket = new SocketHandler(this);
+
+        new NameColumnUpdater(this).start();
     }
 
     @Override
