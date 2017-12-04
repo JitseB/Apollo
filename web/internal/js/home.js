@@ -7,11 +7,12 @@ function load(socket) {
   });
 
   socket.on('disconnect', function() {
+    log('[SOCKET] Disconnected.', '#c0392b');
     document.getElementById('body').style.display = 'none';
     document.getElementById('loader').style.display = 'block';
     document.getElementById('overlay-text').innerText = 'The socket server appears to be offline!';
 
-    log('[APOLLO] Hiding panel.', '#27ae60');
+    log('[APOLLO] Hiding panel.', '#2980b9');
   })
 
   // Data callbacks.
@@ -35,7 +36,7 @@ function load(socket) {
       }
 
       loaded = true;
-      log('[APOLLO] Showing panel.', '#27ae60');
+      log('[APOLLO] Showing panel.', '#2980b9');
 
       startUpdating(socket);
     }
@@ -89,7 +90,7 @@ function load(socket) {
 };
 
 function startUpdating(socket) {
-  log('[APOLLO] Updating server statuses every 5s.', '#27ae60');
+  log('[APOLLO] Updating server statuses every 5s.', '#2980b9');
   setInterval(function() {
     socket.emit('server_list');
   }, 5 * 1000);
