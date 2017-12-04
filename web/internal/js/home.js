@@ -6,11 +6,24 @@ function load(socket) {
     socket.emit('server_list');
   });
 
+  socket.on('disconnect', function() {
+    document.getElementById('body').style.display = 'none';
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('overlay-text').innerText = 'The socket server appears to be offline!';
+
+    log('[APOLLO] Hiding panel.', '#27ae60');
+  })
+
   // Data callbacks.
   socket.on('server_list', function(error, data) {
     if (error) {
       log('[SOCKET] Server list callback error: ' + error + '.', '#c0392b');
       return;
+    }
+ 
+    if (document.getElementById('body').style.display != 'block') {
+      document.getElementById('body').style.display = 'block';
+      document.getElementById('loader').style.display = 'none';
     }
 
     var servers = JSON.parse(data);
@@ -20,10 +33,6 @@ function load(socket) {
       for (var i = 0; i < servers.length; i++) {
         createServer(servers[i]);
       }
-
-      // Now let's show the page!
-      document.getElementById('body').style.display = 'block';
-      document.getElementById('loader').style.display = 'none';
 
       loaded = true;
       log('[APOLLO] Showing panel.', '#27ae60');
@@ -65,17 +74,17 @@ function load(socket) {
   // Error catching.
   socket.on('connect_error', function(error) {
     document.getElementById('overlay-text').innerText = 'The socket server appears to be offline!';
-      log('[SOCKET] Socket server is offline.', '#c0392b');
+    log('[SOCKET] Socket server is offline.', '#c0392b');
   });
 
   socket.on('connect_timeout', function(timeout) {
     document.getElementById('overlay-text').innerText = 'The socket connection timed out!';
-      log('[SOCKET] Socket connection timed out.', '#c0392b');
+    log('[SOCKET] Socket connection timed out.', '#c0392b');
   });
 
   socket.on('error', function(error) {
     document.getElementById('overlay-text').innerText = 'An error occured in your socket connection!';
-      log('[SOCKET] Error occured in the socket connection, error: ' + error + '.', '#c0392b');
+    log('[SOCKET] Error occured in the socket connection, error: ' + error + '.', '#c0392b');
   });
 };
 

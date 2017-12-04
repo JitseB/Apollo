@@ -48,17 +48,7 @@
       </footer>
     </div>
     <div id="loader" class="overlay bg-faded bg-light">
-      <div class="sk-cube-grid">
-        <div class="sk-cube bg-primary sk-cube1"></div>
-        <div class="sk-cube bg-primary sk-cube2"></div>
-        <div class="sk-cube bg-primary sk-cube3"></div>
-        <div class="sk-cube bg-primary sk-cube4"></div>
-        <div class="sk-cube bg-primary sk-cube5"></div>
-        <div class="sk-cube bg-primary sk-cube6"></div>
-        <div class="sk-cube bg-primary sk-cube7"></div>
-        <div class="sk-cube bg-primary sk-cube8"></div>
-        <div class="sk-cube bg-primary sk-cube9"></div>
-      </div>
+      <div class="spinner bg-primary"></div>
       <span class="text-danger" id="overlay-text"></span>
     </div>
 
@@ -81,7 +71,7 @@
       log('[APOLLO] Running version <?php echo $Config["version"]; ?>.', '#f39c12');
       log('[APOLLO] Connecting to socket server...', '#2980b9');
 
-      var socket = io.connect('<?php echo $Config["socket_host"]; ?>:<?php echo $Config["socket_port"]; ?>', { reconnect: true, reconnectionAttempts: 10 });
+      var socket = io.connect('<?php echo $Config["socket_host"]; ?>:<?php echo $Config["socket_port"]; ?>', { reconnect: true });
       load(socket);
     </script>
   </body>

@@ -13,11 +13,11 @@ function notify(app, message) {
 function message(server, status) {
   var play = false;
   if (status === 'critical' && priority >= 4) {
-    notify(name, 'Critical status for ' + server + '.');
+    notify(name, 'Critical status for ' + server + '!');
     play = true;
   }
   else if (status === 'warning' && priority >= 3) {
-    notify(name, 'Warning on ' + server + '.');
+    notify(name, 'Warning status for ' + server + '.');
     play = true;
   }
   else if (status === 'offline' && priority >= 2) {
