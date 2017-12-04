@@ -13,9 +13,10 @@ function load(socket) {
       return;
     }
 
+    var servers = JSON.parse(data);
+
     if (!loaded) {
-      var servers = JSON.parse(data);
-      log('[SOCKET] Recieved server data for ' + servers.length + ' server(s).' + error, '#2980b9');
+    log('[SOCKET] Recieved server data for ' + servers.length + ' server(s).', '#2980b9');
       for (var i = 0; i < servers.length; i++) {
         createServer(servers[i]);
       }
@@ -31,11 +32,28 @@ function load(socket) {
     }
     else {
       // Update values.
-      var totalNow = document.getElementById('server-container').childNodes.length;
-      log('[APOLLO] Total of ' + totalNow + ' server(s).', '#8e44ad');
-      var servers = JSON.parse(data);
+      var container = document.getElementById('server-container');
+      var childNodes = container.childNodes;
+
+      var elementIds = [];
+      for (var i = 0; i < childNodes.length; i++) {
+        elementIds.push(childNodes[i].id);
+      }
+      
       for (var i = 0; i < servers.length; i++) {
-        updateServer(servers[i]);
+        var expected = document.getElementById('server-' + servers[i]['ID']);
+
+        if (typeof(expected) != 'undefined' && expected != null) {
+          updateServer(expected, servers[i]);
+          elementIds.splice(elementIds.indexOf('server-' + servers[i]['ID']), 1);
+        }
+        else {
+          createServer(servers[i]);
+        }
+      }
+
+      for (var i = 0; i < elementIds.length; i++) {
+        container.removeChild(document.getElementById(elementIds[i]));
       }
     }
   });
@@ -62,7 +80,7 @@ function load(socket) {
 };
 
 function startUpdating(socket) {
-  log('[APOLLO] Started status updater task.', '#27ae60');
+  log('[APOLLO] Updating server statuses every 5s.', '#27ae60');
   setInterval(function() {
     socket.emit('server_list');
   }, 5 * 1000);
@@ -88,20 +106,25 @@ function createServer(serverData) {
 
   server.classList += ' ' + status;
 
-  // Todo calculate server status.
-
   document.getElementById('server-container').appendChild(server);
 }
 
-function updateServer(serverData) {
-  var id = serverData['ID'];
-  var old = document.getElementById('server-' + id);
-  if (typeof(old) != 'undefined' && old != null) {
-    // update old value
+function updateServer(element, serverData) {
+  var status = calculateStatus(serverData);
+
+  if (element.classList.contains(status)) {
+    return; // Not necessary to change the element's state.
   }
-  else {
-    // create new item
-  }
+
+  message(serverData['Name'], status);
+
+  element.className = 'server'; 
+
+  var statusSpan = element.childNodes[1];
+  statusSpan.className = 'status';
+  statusSpan.innerHTML = 'Status: <span class="status-value">' + (status == 'good' ? 'online' : status) + '</span>';
+
+  element.classList += ' ' + status;
 }
 
 function calculateStatus(server) {
@@ -111,16 +134,16 @@ function calculateStatus(server) {
   if (server['TPS'] <= 17.40) {
     return 'critical';
   }
+  // If RAM usage is above 75%.
+  if (server['MemoryUsed'] / server['MemoryMax'] > 0.75) {
+    return 'critical';
+  }
   if (server['TPS'] <= 19.20) {
     return 'warning';
   }
   // If RAM usage is above 50%.
-  if (server['usedMemory'] / server['maxMemory'] > 0.5) {
+  if (server['MemoryUsed'] / server['MemoryMax'] > 0.5) {
     return 'warning';
-  }
-  // If RAM usage is above 75%.
-  if (server['usedMemory'] / server['maxMemory'] > 0.75) {
-    return 'critical';
   }
   else {
     return 'good';

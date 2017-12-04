@@ -32,12 +32,9 @@ import java.sql.SQLException;
  */
 public class SocketHandler {
 
-    private final ApolloBungeeCord plugin;
     private SocketIOServer server;
 
     public SocketHandler(ApolloBungeeCord plugin) {
-        this.plugin = plugin;
-
         Configuration config = new Configuration();
         config.setHostname("localhost");
         config.setPingInterval(5000);
@@ -70,14 +67,10 @@ public class SocketHandler {
                     }
 
                     client.sendEvent("server_list", "", servers.toString());
-                } catch (SQLException exception) {
+                } catch (SQLException | IllegalStateException exception) {
                     client.sendEvent("server_list", exception.getMessage());
                 }
             });
-        });
-
-        server.addConnectListener((listener) -> {
-            System.out.println("User connected through SocketIO : " + listener.getSessionId());
         });
 
         server.start();

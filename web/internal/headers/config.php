@@ -8,6 +8,16 @@
     'name' => 'Apollo',
     // 'style' => '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css',
     'style' => '//bootswatch.com/4/cosmo/bootstrap.min.css',
+    
+    /*
+      Priority = 0 -> no notifications
+      Priority = 1 -> message on (now) online
+      Priority = 2 -> message on (now) online and offline
+      Priority = 3 -> message on (now) online, offline and warning
+      Priority = 4 -> message on (now) online, offline, warning and critical
+    */
+    'notification_priority' => 4,
+    'notification_sound' => true,
 
     // Please do NOT change the version, it's used to check for updates!
     'version' => '0.1',

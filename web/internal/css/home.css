@@ -11,6 +11,13 @@
   flex-flow: row wrap;
 }
 
+/* Change this max-width to the md bootstrap size? */
+@media screen and (max-width: 1200px) {
+  #server-container {
+    justify-content: center;
+  }
+}
+
 .server {
   display: flex;
   justify-content: center;

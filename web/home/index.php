@@ -73,15 +73,16 @@
     <script type="text/javascript" src="../internal/js/home.js"></script>
 
     <script type="text/javascript">
+      // Also used for notify.js
       const name = '<?php echo $Config["name"]; ?>';
+      const priority = '<?php echo $Config["notification_priority"]; ?>';
+      const playSound = '<?php echo $Config["notification_sound"]; ?>';
 
       log('[APOLLO] Running version <?php echo $Config["version"]; ?>.', '#f39c12');
       log('[APOLLO] Connecting to socket server...', '#2980b9');
 
       var socket = io.connect('<?php echo $Config["socket_host"]; ?>:<?php echo $Config["socket_port"]; ?>', { reconnect: true, reconnectionAttempts: 10 });
       load(socket);
-
-      notify(name, 'Hello World!');
     </script>
   </body>
 </html>
