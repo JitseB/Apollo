@@ -16,7 +16,7 @@
   <body>
     <div id="body">
       <div class="container">
-        <nav class="navbar navbar-toggleable-md navbar-expand-lg navbar-faded navbar-light bg-faded bg-light" style="border-radius:5px;margin:20px 0 10px 0;">
+        <nav class="navbar navbar-toggleable-md navbar-expand-lg navbar-faded navbar-light bg-faded bg-light mb-4" style="border-radius:5px;margin:20px 0 10px 0;">
         <span class="navbar-brand"><?php echo $Config['name'] ?></span>
           <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -40,11 +40,44 @@
             </form>
           </div>
         </nav>
-        <h1>Servers</h1>
+        <h2>Mojang Status</h2>
+        <div class="row text-center">
+          <div class="col-md-4 text-success py-4">
+            <h3>Auth</h3>
+            <p>Online</p>
+          </div>
+          <div class="col-md-4 text-success py-4">
+            <h3>Sessions</h3>
+            <p>Online</p>
+          </div>
+          <div class="col-md-4 text-success py-4">
+            <h3>API</h3>
+            <p>Online</p>
+          </div>
+        </div>
+        <h2>Online</h2>
+        <div class="row text-center">
+          <div class="col-md-4 my-4">
+            <h3>Player Record</h3>
+            <p>1,000</p>
+          </div>
+          <div class="col-md-4 my-4">
+            <h3>Total Playing</h3>
+            <p>10</p>
+          </div>
+          <div class="col-md-4 my-4">
+            <h3>Growth</h3>
+            <p>-1</p>
+          </div>
+        </div>
+        <h2 class="mb-4">Servers</h2>
         <div id="server-container"></div>
       </div>
-      <footer>
-        <h1>Ping: <span id="ping"></span>ms.</h1>
+      <footer class="bg-faded bg-light">
+        <div class="mx-auto col-md-5 pt-2 pb-4 text-center">
+          <p class="mt-4 text-primary">Socket ping: <span id="ping">-</span> ms.</p>
+          <?php include '../internal/include/footer.inc.php'; ?>
+        </div>
       </footer>
     </div>
     <div id="loader" class="overlay bg-faded bg-light">
@@ -56,6 +89,7 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/push.js/0.0.8/push.min.js"></script>
 
     <script type="text/javascript" src="../internal/js/logger.js"></script>

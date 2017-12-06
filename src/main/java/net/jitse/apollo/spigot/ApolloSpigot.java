@@ -67,7 +67,7 @@ public class ApolloSpigot extends JavaPlugin {
             return;
         }
 
-        mySQL.execute(DataType.getServersTable(), () -> new InitialDataUpdater(this).runTaskAsynchronously(this));
+        mySQL.execute(DataType.getServersTable(), () -> mySQL.execute(DataType.getGraphsTable(), () -> new InitialDataUpdater(this).runTaskAsynchronously(this)));
 
         // Todo : Change to config variables.
         dataUpdaterRunnable = new DataUpdater(this, false, 5000);

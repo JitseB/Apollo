@@ -5,7 +5,7 @@
  ?>
 
  <div class="text-center">
-   <span>© <?php echo (new DateTime()) -> format('Y'); ?> - Apollo - Jitse Boonstra</span><br>
+   <span><?php echo $Config['network_name'] ?></span><br><br>
+   <span>© <?php echo (new DateTime()) -> format('Y'); ?> - Apollo - Jitse B.</span><br>
    <span>A server overview system for Minecraft networks.</span><br>
-   <!--<span>View source code on <a href="https://github.com/JitseB/Apollo">GitHub</a>.</span>-->
  </div>

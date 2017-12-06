@@ -1,3 +1,12 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 175px;
+}
+
 #body {
   display: none;
 }
@@ -96,4 +105,6 @@
 footer {
   position: absolute;
   bottom: 0;
+  width: 100%;
+  display: block;
 }

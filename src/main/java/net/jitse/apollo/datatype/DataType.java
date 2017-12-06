@@ -88,9 +88,8 @@ public enum DataType {
         return "CREATE TABLE IF NOT EXISTS ApolloServers (" + StringUtils.join(values, ", ") + ");";
     }
 
-    // Todo: Fix this method.
     public static String getGraphsTable() {
         List<String> values = Arrays.stream(values()).filter(value -> value.hasGraph()).map(value -> "`" + value.sqlName + "` " + value.sqlType).collect(Collectors.toList());
-        return "CREATE TABLE IF NOT EXISTS ApolloGraphs (ServerName INT NOT NULL AUTO_INCREMENT PRIMARY KEY, Time BIGINT(50), " + StringUtils.join(values, ", ") + ");";
+        return "CREATE TABLE IF NOT EXISTS ApolloGraphs (ID INT NOT NULL, Time BIGINT(50), " + StringUtils.join(values, ", ") + ");";
     }
 }

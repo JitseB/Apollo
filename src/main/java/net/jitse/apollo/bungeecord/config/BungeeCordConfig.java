@@ -61,7 +61,7 @@ public class BungeeCordConfig {
             this.configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
 
             configuration.set("SocketPort", 8193);
-            configuration.set("ServerListSize", 50);
+            configuration.set("ServerListSize", 45);
 
             configuration.set("MySQL.Host", "127.0.0.1");
             configuration.set("MySQL.Port", 3306);

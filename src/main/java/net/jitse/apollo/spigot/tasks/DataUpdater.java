@@ -19,6 +19,7 @@ package net.jitse.apollo.spigot.tasks;
 
 import net.jitse.apollo.datatype.DataType;
 import net.jitse.apollo.spigot.ApolloSpigot;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,7 @@ public class DataUpdater implements Runnable {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                // Prepare DataTypes that need an action.
                 List<DataType> scheduledTypes = new ArrayList<>();
                 List<DataType> graphTypes = new ArrayList<>();
 
@@ -93,14 +95,30 @@ public class DataUpdater implements Runnable {
                     }
                 }
 
+                // Update server values.
                 String set = scheduledTypes.stream().map(type -> "`" + type.getSQLName() + "`=?").collect(Collectors.joining(", "));
                 List<Object> values = scheduledTypes.stream().map(type -> type.getSupplier().get()).collect(Collectors.toList());
                 values.add(plugin.getId()); // For the WHERE statement.
 
                 plugin.getMySQL().execute("UPDATE ApolloServers SET " + set + " WHERE ID=?;", values.toArray());
 
-                long time = System.currentTimeMillis();
-                // Todo : graph types. Include System#currentTimesMillis.
+                // Now on to the graph data.
+                // Plus 2 for the Server ID and System Time.
+                Object[] graphData = new Object[graphTypes.size() + 2];
+                graphData[0] = plugin.getId();
+                graphData[1] = System.currentTimeMillis();
+
+                for (int i = 0; i < graphTypes.size(); i++) {
+                    graphData[i + 2] = graphTypes.get(i).getSupplier().get();
+                }
+
+                String insert = "INSERT INTO ApolloGraphs VALUES(" + StringUtils.repeat("?", ",", graphData.length) + ");";
+                plugin.getMySQL().execute(insert, graphData);
+
+                // Now remove the old values in the graph table.
+                long maxSaved = 1000 * 60 * 60 * 24; // 24h (1000ms = 1s -> 1 * 60 = 1m -> 1 * 60 = 1h -> 1 * 24 = 24h)
+                String delete = "DELETE FROM ApolloGraphs WHERE ID=? AND Time<=?;";
+                plugin.getMySQL().execute(delete, plugin.getId(), System.currentTimeMillis() - maxSaved);
             }
         }, 0, millisDelay);
     }

@@ -38,7 +38,7 @@ public class ApolloBungeeCord extends Plugin {
 
     @Override
     public void onEnable() {
-        getLogger().log(Level.INFO, "Enabling plugin " + getDescription().getName() + " version " + getDescription().getVersion() + " by " + getDescription().getAuthor());
+        System.out.println("Enabling plugin " + getDescription().getName() + " version " + getDescription().getVersion() + " by " + getDescription().getAuthor());
 
         try {
             config = new BungeeCordConfig(this);
