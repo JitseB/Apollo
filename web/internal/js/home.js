@@ -4,6 +4,7 @@ function load(socket) {
   socket.on('connect', function() {
     log('[SOCKET] Established connection.', '#27ae60');
     socket.emit('server_list');
+    getNewStatuses();
   });
 
   socket.on('disconnect', function() {
@@ -39,6 +40,7 @@ function load(socket) {
       log('[APOLLO] Showing panel.', '#2980b9');
 
       startUpdating(socket);
+      startStatusUpdating();
     }
     else {
       // Update values.

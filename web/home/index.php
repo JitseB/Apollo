@@ -42,17 +42,17 @@
         </nav>
         <h2>Mojang Status</h2>
         <div class="row text-center">
-          <div class="col-md-4 text-success py-4">
+          <div class="col-md-4 py-4 text-primary">
             <h3>Auth</h3>
-            <p>Online</p>
+            <p id="auth-text">Pending...</p>
           </div>
-          <div class="col-md-4 text-success py-4">
+          <div class="col-md-4 py-4 text-primary">
             <h3>Sessions</h3>
-            <p>Online</p>
+            <p id="sessions-text">Pending...</p>
           </div>
-          <div class="col-md-4 text-success py-4">
+          <div class="col-md-4 py-4 text-primary">
             <h3>API</h3>
-            <p>Online</p>
+            <p id="api-text">Pending...</p>
           </div>
         </div>
         <h2>Online</h2>
@@ -94,13 +94,15 @@
 
     <script type="text/javascript" src="../internal/js/logger.js"></script>
     <script type="text/javascript" src="../internal/js/notify.js"></script>
+    <script type="text/javascript" src="../internal/js/status.js"></script>
     <script type="text/javascript" src="../internal/js/home.js"></script>
 
     <script type="text/javascript">
       // Also used for notify.js
       const name = '<?php echo $Config["name"]; ?>';
-      const priority = '<?php echo $Config["notification_priority"]; ?>';
-      const playSound = '<?php echo $Config["notification_sound"]; ?>';
+      const priority = <?php echo $Config["notification_priority"]; ?>;
+      const playSound = <?php echo $Config["notification_sound"]; ?>;
+      const notifyStatusUpdates = <?php echo $Config['notification_status'] ?>
 
       log('[APOLLO] Running version <?php echo $Config["version"]; ?>.', '#f39c12');
       log('[APOLLO] Connecting to socket server...', '#2980b9');

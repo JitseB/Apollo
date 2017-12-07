@@ -17,6 +17,7 @@
     // Priority = 4 -> message on (now) online, offline, warning and critical
     'notification_priority' => 4,
     'notification_sound' => true,
+    'notification_status' => true,
 
     // [Version]
     'version' => '0.1',
