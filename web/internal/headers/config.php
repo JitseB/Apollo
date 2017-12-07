@@ -6,7 +6,7 @@
   $Config = array(
     // [General]
     'name' => 'Apollo',
-    'network_name' => 'SpaceMine Ltd.',
+    'network_name' => 'Your Cool Network',
     'style' => '//bootswatch.com/4/cosmo/bootstrap.min.css',
     
     // [Notifications]

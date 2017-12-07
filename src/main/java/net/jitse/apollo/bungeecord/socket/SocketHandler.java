@@ -73,6 +73,16 @@ public class SocketHandler {
             });
         });
 
+        // Todo: In future: Change these to sql based values for RedisBungee support.
+        server.addEventListener("total_players", null, (client, data, ackRequest) -> {
+            int total = plugin.getProxy().getOnlineCount();
+            client.sendEvent("total_players", total);
+        });
+
+        server.addEventListener("player_record", null, (client, data, ackRequest) -> {
+            client.sendEvent("player_record", "TODO");
+        });
+
         server.start();
     }
 

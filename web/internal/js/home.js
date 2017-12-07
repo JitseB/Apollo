@@ -4,6 +4,8 @@ function load(socket) {
   socket.on('connect', function() {
     log('[SOCKET] Established connection.', '#27ae60');
     socket.emit('server_list');
+    socket.emit('total_players');
+    socket.emit('player_record');
     getNewStatuses();
   });
 
@@ -70,7 +72,19 @@ function load(socket) {
     }
   });
 
-  socket.on('pong', (latency) => {
+  socket.on('total_players', function(totalPlayers) {
+    var total = document.getElementById('total-value');
+    var oldTotalPlayers = total.innerText;
+    total.innerText = totalPlayers;
+
+    document.getElementById('growth-value').innerText = (totalPlayers - oldTotalPlayers);
+  });
+
+  socket.on('player_record', function(playerRecord) {
+    document.getElementById('record-value').innerText = playerRecord;
+  });
+
+  socket.on('pong', function(latency) {
     document.getElementById('ping').innerText = latency;
   });
 
@@ -93,9 +107,15 @@ function load(socket) {
 
 function startUpdating(socket) {
   log('[APOLLO] Updating server statuses every 5s.', '#2980b9');
+  
   setInterval(function() {
     socket.emit('server_list');
   }, 5 * 1000);
+
+  setInterval(function() {
+    socket.emit('total_players');
+    socket.emit('player_record');
+  }, 1000);
 }
 
 function createServer(serverData) {

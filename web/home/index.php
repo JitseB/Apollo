@@ -13,10 +13,10 @@
     <link rel="stylesheet" href="../internal/css/home.css">
     <link rel="stylesheet" href="../internal/css/loader.css">
   </head>
-  <body>
+  <body> 
     <div id="body">
       <div class="container">
-        <nav class="navbar navbar-toggleable-md navbar-expand-lg navbar-faded navbar-light bg-faded bg-light mb-4" style="border-radius:5px;margin:20px 0 10px 0;">
+        <nav class="navbar navbar-toggleable-md navbar-expand-lg navbar-faded navbar-light bg-faded bg-light my-4">
         <span class="navbar-brand"><?php echo $Config['name'] ?></span>
           <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -59,15 +59,15 @@
         <div class="row text-center">
           <div class="col-md-4 my-4">
             <h3>Player Record</h3>
-            <p>1,000</p>
+            <p id="record-value">0</p>
           </div>
           <div class="col-md-4 my-4">
             <h3>Total Playing</h3>
-            <p>10</p>
+            <p id="total-value">0</p>
           </div>
           <div class="col-md-4 my-4">
             <h3>Growth</h3>
-            <p>-1</p>
+            <p id="growth-value">0</p>
           </div>
         </div>
         <h2 class="mb-4">Servers</h2>
