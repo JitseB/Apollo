@@ -18,6 +18,7 @@ package net.jitse.apollo.bungeecord;
  */
 
 import net.jitse.apollo.bungeecord.config.BungeeCordConfig;
+import net.jitse.apollo.bungeecord.listeners.PlayerRecordListener;
 import net.jitse.apollo.bungeecord.socket.SocketHandler;
 import net.jitse.apollo.bungeecord.tasks.NameColumnUpdater;
 import net.jitse.apollo.mysql.MySQL;
@@ -61,6 +62,8 @@ public class ApolloBungeeCord extends Plugin {
                     config.getConfig().getString("MySQL.Database"),
                     config.getConfig().getBoolean("MySQL.SSL")
             );
+
+            mySql.createTable("ApolloStats", "Record INT NOT NULL");
         } catch (Exception exception) {
             getLogger().log(Level.WARNING, "Was not able to connect to the database. Exception message: " + exception.getMessage());
             return;
@@ -69,6 +72,8 @@ public class ApolloBungeeCord extends Plugin {
         socket = new SocketHandler(this);
 
         new NameColumnUpdater(this).start();
+
+        getProxy().getPluginManager().registerListener(this, new PlayerRecordListener(this));
     }
 
     @Override

@@ -73,14 +73,26 @@ public class SocketHandler {
             });
         });
 
-        // Todo: In future: Change these to sql based values for RedisBungee support.
+        // Todo in future: Change these to sql based values for RedisBungee support.
         server.addEventListener("total_players", null, (client, data, ackRequest) -> {
             int total = plugin.getProxy().getOnlineCount();
             client.sendEvent("total_players", total);
         });
 
         server.addEventListener("player_record", null, (client, data, ackRequest) -> {
-            client.sendEvent("player_record", "TODO");
+            plugin.getMySql().select("SELECT Record FROM ApolloStats;", resultSet -> {
+                try {
+                    int record = 0;
+
+                    if (resultSet.next()) {
+                        record = resultSet.getInt("record");
+                    }
+
+                    client.sendEvent("player_record", "", record);
+                } catch (SQLException | IllegalStateException exception) {
+                    client.sendEvent("player_record", exception.getMessage());
+                }
+            });
         });
 
         server.start();

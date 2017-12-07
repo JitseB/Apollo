@@ -80,7 +80,11 @@ function load(socket) {
     document.getElementById('growth-value').innerText = (totalPlayers - oldTotalPlayers);
   });
 
-  socket.on('player_record', function(playerRecord) {
+  socket.on('player_record', function(error, playerRecord) {
+    if (error) {
+      log('[SOCKET] Error on player record callback: ' + error + ".");
+      return;
+    }
     document.getElementById('record-value').innerText = playerRecord;
   });
 
@@ -107,7 +111,7 @@ function load(socket) {
 
 function startUpdating(socket) {
   log('[APOLLO] Updating server statuses every 5s.', '#2980b9');
-  
+
   setInterval(function() {
     socket.emit('server_list');
   }, 5 * 1000);
